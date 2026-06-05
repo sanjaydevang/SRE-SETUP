@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crs-app-config
+  namespace: crs-lab
+data:
+  RESERVATION_STREAM: reservation-events
+  RESERVATION_GROUP: pms-delivery-workers
+  DLQ_STREAM: reservation-events-dlq
+  MAX_DELIVERY_ATTEMPTS: "3"
+  PMS_BASE_URL: http://mock-pms:9000
+  REDIS_URL: redis://redis:6379/0
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: crs-db-secret
+  namespace: crs-lab
+type: Opaque
+stringData:
+  POSTGRES_USER: crs
+  POSTGRES_PASSWORD: crs_password
+  POSTGRES_DB: crs
+  DATABASE_URL: postgresql://crs:crs_password@postgres:5432/crs
+

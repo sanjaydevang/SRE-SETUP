@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: CRS SRE Lab
+    orgId: 1
+    folder: CRS SRE Lab
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/grafana/dashboards
+

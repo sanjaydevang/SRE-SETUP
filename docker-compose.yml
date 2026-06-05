@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: crs
+      POSTGRES_PASSWORD: crs_password
+      POSTGRES_DB: crs
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crs -d crs"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mock-pms:
+    build:
+      context: ./services/mock_pms
+    environment:
+      SERVICE_NAME: mock-pms
+      PORT: 9000
+    ports:
+      - "9000:9000"
+
+  reservation-service:
+    build:
+      context: ./services/reservation_service
+    environment:
+      SERVICE_NAME: reservation-service
+      PORT: 8000
+      DATABASE_URL: postgresql://crs:crs_password@postgres:5432/crs
+      REDIS_URL: redis://redis:6379/0
+      RESERVATION_STREAM: reservation-events
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  notification-worker:
+    build:
+      context: ./services/notification_worker
+    environment:
+      SERVICE_NAME: notification-worker
+      PORT: 8100
+      REDIS_URL: redis://redis:6379/0
+      RESERVATION_STREAM: reservation-events
+      RESERVATION_GROUP: pms-delivery-workers
+      PMS_BASE_URL: http://mock-pms:9000
+      MAX_DELIVERY_ATTEMPTS: 3
+      DLQ_STREAM: reservation-events-dlq
+    ports:
+      - "8100:8100"
+    depends_on:
+      redis:
+        condition: service_healthy
+      mock-pms:
+        condition: service_started
+
+volumes:
+  postgres_data:
+

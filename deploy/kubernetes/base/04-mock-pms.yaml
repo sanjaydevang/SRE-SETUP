@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mock-pms
+  namespace: crs-lab
+spec:
+  selector:
+    app: mock-pms
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 9000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mock-pms
+  namespace: crs-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mock-pms
+  template:
+    metadata:
+      labels:
+        app: mock-pms
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9000"
+        prometheus.io/path: /metrics
+    spec:
+      containers:
+        - name: mock-pms
+          image: crs-sre-lab/mock-pms:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+          env:
+            - name: SERVICE_NAME
+              value: mock-pms
+            - name: PORT
+              value: "9000"
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
