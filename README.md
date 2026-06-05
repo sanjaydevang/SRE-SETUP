@@ -15,6 +15,7 @@ You can use it to practice:
 For Kubernetes, Prometheus, Grafana, and Splunk practice, use:
 
 - `OPERATIONS-K8S-OBSERVABILITY.md`
+- `docs/SRE-DEVOPS-STUDY-NOTES.md`
 - `deploy/kubernetes/base`
 - `deploy/kubernetes/observability`
 - `deploy/kubernetes/splunk`
