@@ -134,7 +134,7 @@ ssh \
   -L 9090:127.0.0.1:9090 \
   -L 9093:127.0.0.1:9093 \
   -L 3000:127.0.0.1:3000 \
-  -L 8080:127.0.0.1:8080 \
+  -L 18080:127.0.0.1:18080 \
   -L 9080:127.0.0.1:9080 \
   <user>@<vps-ip>
 ```
@@ -148,7 +148,7 @@ Open:
 - Prometheus targets: <http://localhost:9090/targets>
 - Prometheus alerts: <http://localhost:9090/alerts>
 - Alertmanager: <http://localhost:9093>
-- cAdvisor: <http://localhost:8080>
+- cAdvisor: <http://localhost:18080>
 - API docs: <http://localhost:8000/docs>
 
 ## 4. Verify Prometheus Targets
@@ -796,4 +796,3 @@ Show resolved alert and explain mitigation versus root cause.
 ## 18. Interview Explanation
 
 > I built an observability pipeline for a CRS application on a VPS. Application services expose custom Prometheus metrics. Node Exporter provides host CPU, memory, disk, load, and network metrics. cAdvisor provides container-level resource metrics. Postgres and Redis exporters provide dependency health. Prometheus scrapes all targets every 15 seconds and evaluates alert rules. Grafana provides application and infrastructure dashboards. Alertmanager groups and routes firing and resolved alerts to a webhook receiver, which can later be replaced with Slack, PagerDuty, or ServiceNow.
-

@@ -19,11 +19,35 @@ check_endpoint "Notification ready" "http://127.0.0.1:8100/health/ready"
 check_endpoint "Mock PMS ready" "http://127.0.0.1:9000/health/ready"
 check_endpoint "Prometheus ready" "http://127.0.0.1:9090/-/ready"
 check_endpoint "Grafana health" "http://127.0.0.1:3000/api/health"
-check_endpoint "Node Exporter" "http://127.0.0.1:9100/metrics"
-check_endpoint "cAdvisor" "http://127.0.0.1:8080/healthz"
-check_endpoint "Postgres Exporter" "http://127.0.0.1:9187/metrics"
-check_endpoint "Redis Exporter" "http://127.0.0.1:9121/metrics"
+check_endpoint "cAdvisor" "http://127.0.0.1:18080/healthz"
 check_endpoint "Alertmanager" "http://127.0.0.1:9093/-/ready"
+
+check_prometheus_target() {
+  local job="$1"
+
+  if curl --fail --silent --get \
+    --data-urlencode "query=up{job=\"${job}\"}" \
+    "http://127.0.0.1:9090/api/v1/query" \
+    | python3 -c '
+import json
+import sys
+
+data = json.load(sys.stdin)
+results = data.get("data", {}).get("result", [])
+healthy = bool(results) and all(item["value"][1] == "1" for item in results)
+raise SystemExit(0 if healthy else 1)
+'; then
+    printf "%-24s OK\n" "${job} target"
+  else
+    printf "%-24s FAILED\n" "${job} target"
+    return 1
+  fi
+}
+
+check_prometheus_target "node-exporter"
+check_prometheus_target "cadvisor"
+check_prometheus_target "postgres-exporter"
+check_prometheus_target "redis-exporter"
 
 echo
 docker compose \

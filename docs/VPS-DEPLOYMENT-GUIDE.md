@@ -315,7 +315,7 @@ ssh \
   -L 9090:127.0.0.1:9090 \
   -L 9093:127.0.0.1:9093 \
   -L 3000:127.0.0.1:3000 \
-  -L 8080:127.0.0.1:8080 \
+  -L 18080:127.0.0.1:18080 \
   -L 9080:127.0.0.1:9080 \
   <user>@<vps-ip>
 ```
@@ -330,7 +330,7 @@ Then open on the Mac:
 - Prometheus: <http://localhost:9090>
 - Alertmanager: <http://localhost:9093>
 - Grafana: <http://localhost:3000>
-- cAdvisor: <http://localhost:8080>
+- cAdvisor: <http://localhost:18080>
 
 Grafana uses the username and password from the VPS `.env`.
 
