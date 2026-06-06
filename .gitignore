@@ -1,7 +1,7 @@
 __pycache__/
 .pytest_cache/
 .venv/
+.env
 *.pyc
 .DS_Store
 postgres_data/
-

@@ -8,6 +8,7 @@ data:
     apiVersion: 1
     datasources:
       - name: Prometheus
+        uid: Prometheus
         type: prometheus
         access: proxy
         url: http://prometheus:9090
@@ -162,4 +163,3 @@ spec:
         - name: grafana-crs-dashboard
           configMap:
             name: grafana-crs-dashboard
-

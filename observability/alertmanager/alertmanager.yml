@@ -1,0 +1,19 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: local-demo-webhook
+  group_by:
+    - alertname
+    - service
+    - severity
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 4h
+
+receivers:
+  - name: local-demo-webhook
+    webhook_configs:
+      - url: http://alert-receiver:8080/alerts
+        send_resolved: true
+

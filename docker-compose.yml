@@ -1,12 +1,13 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: crs
-      POSTGRES_PASSWORD: crs_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crs_password}
       POSTGRES_DB: crs
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,44 +15,64 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 10
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   mock-pms:
+    restart: unless-stopped
     build:
       context: ./services/mock_pms
     environment:
       SERVICE_NAME: mock-pms
       PORT: 9000
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   reservation-service:
+    restart: unless-stopped
     build:
       context: ./services/reservation_service
     environment:
       SERVICE_NAME: reservation-service
       PORT: 8000
-      DATABASE_URL: postgresql://crs:crs_password@postgres:5432/crs
+      DATABASE_URL: postgresql://crs:${POSTGRES_PASSWORD:-crs_password}@postgres:5432/crs
       REDIS_URL: redis://redis:6379/0
       RESERVATION_STREAM: reservation-events
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   notification-worker:
+    restart: unless-stopped
     build:
       context: ./services/notification_worker
     environment:
@@ -64,13 +85,16 @@ services:
       MAX_DELIVERY_ATTEMPTS: 3
       DLQ_STREAM: reservation-events-dlq
     ports:
-      - "8100:8100"
+      - "127.0.0.1:8100:8100"
     depends_on:
       redis:
         condition: service_healthy
       mock-pms:
         condition: service_started
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
-

@@ -2,6 +2,12 @@
 
 These notes explain the tools, architecture, and operations we built in the CRS SRE lab. Use this as your base for hands-on practice first. Later we will convert this into interview scenarios and stories.
 
+Related interview question bank:
+
+```text
+docs/interview-prep/SRE-KUBERNETES-INTERVIEW-QUESTION-BANK.md
+```
+
 ## 1. What We Built
 
 We built a small Central Reservation System lab.
@@ -1538,4 +1544,3 @@ Splunk answer:
 Incident answer:
 
 > If PMS delivery fails, I check Grafana for DLQ and failure metrics, Prometheus for rate changes, and logs for error details. I scope the blast radius by hotel chain and property, identify whether the issue is credential, timeout, server error, or silent failure, then coordinate mitigation and replay if safe.
-

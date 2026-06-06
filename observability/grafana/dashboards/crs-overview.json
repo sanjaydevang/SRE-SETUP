@@ -172,7 +172,7 @@
       "pluginVersion": "11.4.0",
       "targets": [
         {
-          "expr": "crs_pms_delivery_success_total",
+          "expr": "crs_pms_delivery_success_total{job=\"notification-worker\"}",
           "legendFormat": "pms success",
           "refId": "A"
         }
@@ -374,12 +374,12 @@
       },
       "targets": [
         {
-          "expr": "rate(crs_pms_delivery_success_total[1m])",
+          "expr": "rate(crs_pms_delivery_success_total{job=\"notification-worker\"}[1m])",
           "legendFormat": "pms success rate",
           "refId": "A"
         },
         {
-          "expr": "rate(crs_pms_delivery_failure_total[1m])",
+          "expr": "rate(crs_pms_delivery_failure_total{job=\"notification-worker\"}[1m])",
           "legendFormat": "pms failure rate",
           "refId": "B"
         }
@@ -408,4 +408,3 @@
   "version": 1,
   "weekStart": ""
 }
-

@@ -1,0 +1,148 @@
+groups:
+  - name: crs-availability
+    rules:
+      - alert: CRSScrapeTargetDown
+        expr: up{job=~"reservation-service|notification-worker|mock-pms|node-exporter|cadvisor|postgres-exporter|redis-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: sre
+        annotations:
+          summary: "Prometheus target {{ $labels.job }} is down"
+          description: "Prometheus has failed to scrape {{ $labels.instance }} for more than one minute."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: CRSDLQMessagesDetected
+        expr: sum(increase(crs_dlq_messages_total[5m])) > 0
+        for: 30s
+        labels:
+          severity: critical
+          service: notification-worker
+          team: sre
+        annotations:
+          summary: "New CRS messages reached the DLQ"
+          description: "PMS notification delivery exhausted retries during the last five minutes."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: CRSPMSDeliveryFailures
+        expr: sum(increase(crs_pms_delivery_failure_total{job="notification-worker"}[5m])) >= 2
+        for: 30s
+        labels:
+          severity: warning
+          service: notification-worker
+          team: sre
+        annotations:
+          summary: "Repeated PMS delivery failures detected"
+          description: "The notification worker recorded at least two PMS delivery failures in five minutes."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+  - name: vps-infrastructure
+    rules:
+      - alert: VPSHighCPU
+        expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: vps
+          team: sre
+        annotations:
+          summary: "VPS CPU usage is above 80 percent"
+          description: "Average CPU usage on {{ $labels.instance }} has remained above 80 percent for two minutes."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: VPSHighMemory
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 85
+        for: 2m
+        labels:
+          severity: warning
+          service: vps
+          team: sre
+        annotations:
+          summary: "VPS memory usage is above 85 percent"
+          description: "Memory usage on {{ $labels.instance }} has remained above 85 percent for two minutes."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: VPSDiskSpaceLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{
+              fstype!~"tmpfs|overlay|squashfs",
+              mountpoint="/"
+            }
+            /
+            node_filesystem_size_bytes{
+              fstype!~"tmpfs|overlay|squashfs",
+              mountpoint="/"
+            }
+          ) * 100 < 15
+        for: 5m
+        labels:
+          severity: critical
+          service: vps
+          team: sre
+        annotations:
+          summary: "VPS root filesystem has less than 15 percent free"
+          description: "Free disk space on {{ $labels.instance }} is below 15 percent."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: VPSFilesystemReadOnly
+        expr: node_filesystem_readonly{mountpoint="/"} == 1
+        for: 1m
+        labels:
+          severity: critical
+          service: vps
+          team: sre
+        annotations:
+          summary: "VPS root filesystem is read-only"
+          description: "The root filesystem was reported read-only by Node Exporter."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+  - name: data-services
+    rules:
+      - alert: PostgreSQLExporterDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+          team: sre
+        annotations:
+          summary: "PostgreSQL is unavailable"
+          description: "Postgres Exporter cannot connect to the CRS database."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: PostgreSQLHighConnections
+        expr: sum(pg_stat_activity_count) > 80
+        for: 2m
+        labels:
+          severity: warning
+          service: postgres
+          team: sre
+        annotations:
+          summary: "PostgreSQL connection usage is high"
+          description: "Observed PostgreSQL sessions are above the lab threshold of 80."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: RedisExporterDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+          team: sre
+        annotations:
+          summary: "Redis is unavailable"
+          description: "Redis Exporter cannot connect to the CRS Redis instance."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 80 and redis_memory_max_bytes > 0
+        for: 2m
+        labels:
+          severity: warning
+          service: redis
+          team: sre
+        annotations:
+          summary: "Redis memory usage is above 80 percent"
+          description: "Redis memory usage is approaching the configured maximum."
+          runbook: "docs/OBSERVABILITY-DEMO-RUNBOOK.md"
