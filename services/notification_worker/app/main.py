@@ -81,7 +81,8 @@ async def worker_loop() -> None:
 
     while True:
         try:
-            response = redis_client.xreadgroup(
+            response = await asyncio.to_thread(
+                redis_client.xreadgroup,
                 settings.reservation_group,
                 settings.consumer_name,
                 {settings.reservation_stream: ">"},
@@ -143,4 +144,3 @@ def metrics() -> Response:
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=settings.port)
-
