@@ -6,6 +6,7 @@ Related interview question bank:
 
 ```text
 docs/interview-prep/SRE-KUBERNETES-INTERVIEW-QUESTION-BANK.md
+docs/interview-prep/SRE-WORK-DEMO-SCRIPT.md
 ```
 
 ## 1. What We Built

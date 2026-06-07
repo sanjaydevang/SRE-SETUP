@@ -18,6 +18,7 @@ For Kubernetes, Prometheus, Grafana, and Splunk practice, use:
 - `docs/VPS-DEPLOYMENT-GUIDE.md`
 - `docs/OBSERVABILITY-DEMO-RUNBOOK.md`
 - `docs/SRE-DEVOPS-STUDY-NOTES.md`
+- `docs/interview-prep/SRE-WORK-DEMO-SCRIPT.md`
 - `deploy/kubernetes/base`
 - `deploy/kubernetes/observability`
 - `deploy/kubernetes/splunk`
