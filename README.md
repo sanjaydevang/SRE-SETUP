@@ -14,11 +14,15 @@ You can use it to practice:
 
 For Kubernetes, Prometheus, Grafana, and Splunk practice, use:
 
+- `docs/READING-IN-VSCODE.md`
+- `docs/mastery/ENTERPRISE-SRE-MASTERY-CURRICULUM.md`
+- `docs/mastery/linux/01-CPU-TROUBLESHOOTING.md`
 - `OPERATIONS-K8S-OBSERVABILITY.md`
 - `docs/VPS-DEPLOYMENT-GUIDE.md`
 - `docs/OBSERVABILITY-DEMO-RUNBOOK.md`
 - `docs/SRE-DEVOPS-STUDY-NOTES.md`
 - `docs/interview-prep/SRE-WORK-DEMO-SCRIPT.md`
+- `docs/interview-prep/P1-INCIDENT-ARCHITECTURE-AND-STORIES.md`
 - `deploy/kubernetes/base`
 - `deploy/kubernetes/observability`
 - `deploy/kubernetes/splunk`

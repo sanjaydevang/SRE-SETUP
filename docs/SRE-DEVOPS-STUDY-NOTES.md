@@ -7,6 +7,7 @@ Related interview question bank:
 ```text
 docs/interview-prep/SRE-KUBERNETES-INTERVIEW-QUESTION-BANK.md
 docs/interview-prep/SRE-WORK-DEMO-SCRIPT.md
+docs/interview-prep/P1-INCIDENT-ARCHITECTURE-AND-STORIES.md
 ```
 
 ## 1. What We Built

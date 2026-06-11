@@ -1,0 +1,13 @@
+{
+  "markdown.styles": [
+    "docs/styles/reading.css"
+  ],
+  "markdown.preview.fontSize": 17,
+  "markdown.preview.lineHeight": 1.65,
+  "markdown.preview.breaks": false,
+  "editor.wordWrap": "on",
+  "editor.fontSize": 15,
+  "editor.lineHeight": 24,
+  "editor.minimap.enabled": false,
+  "workbench.editor.enablePreview": false
+}
